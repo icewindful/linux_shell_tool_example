@@ -1,0 +1,71 @@
+#!/bin/bash
+
+DEV_SDA1="/dev/sda1"
+DEV_SDA1_DIR="DEV_D_SDA1"
+DEV_SDB1="/dev/sdb1"
+DEV_SDB1_DIR="DEV_D_SDB1"
+DEV_SDC1="/dev/sdc1"
+DEV_SDC1_DIR="DEV_D_SDC1"
+DEV_SDD1="/dev/sdd1"
+DEV_SDD1_DIR="DEV_D_SDD1"
+DEV_SDE1="/dev/sde1"
+DEV_SDE1_DIR="DEV_D_SDE1"
+ACT_FILE_NAME="/acction_log.txt"
+
+#check dir exist
+[ ! -d /mnt/$DEV_SDA1_DIR ] && mkdir /mnt/$DEV_SDA1_DIR
+[ ! -d /mnt/$DEV_SDB1_DIR ] && mkdir /mnt/$DEV_SDB1_DIR
+[ ! -d /mnt/$DEV_SDC1_DIR ] && mkdir /mnt/$DEV_SDC1_DIR
+[ ! -d /mnt/$DEV_SDD1_DIR ] && mkdir /mnt/$DEV_SDD1_DIR
+[ ! -d /mnt/$DEV_SDE1_DIR ] && mkdir /mnt/$DEV_SDE1_DIR
+
+#if not file create it.
+[ ! -f `pwd`$ACT_FILE_NAME ] && touch `pwd`$ACT_FILE_NAME
+#save script log start
+LOG_FILE=`pwd`$ACT_FILE_NAME
+
+LOGFILE=/tmp/usb_script.log
+echo $SEQNUM $SUBSYSTEM $ACTION $DEVNAME >> $LOGFILE
+exec 3>> $LOGFILE && exec >& 3 && exec 2>&1
+#save script log end
+
+echo "start" >> `pwd`$ACT_FILE_NAME
+
+if [ "$SUBSYSTEM" = "block" -a "$ACTION" = "add" ]
+then
+echo "$DEVNAME" >> `pwd`$ACT_FILE_NAME
+    
+    if [ "$ACTION" = "add" -a "$DEVNAME" = "$DEV_SDA1" ]
+    then
+    echo `date -IS` >> `pwd`$ACT_FILE_NAME
+    echo "mount" >> `pwd`$ACT_FILE_NAME
+    `mount \-v \-t auto /dev/sda1 /mnt/$DEV_SDA1_DIR`
+    fi
+
+    if [ "$ACTION" = "add" -a "$DEVNAME" = "$DEV_SDB1" ]
+    then
+    echo `date -IS` >> `pwd`$ACT_FILE_NAME
+    echo "mount" >> `pwd`$ACT_FILE_NAME
+    `mount \-v \-t auto /dev/sdb1 /mnt/$DEV_SDA1_DIR`
+    #orginal line example Start #
+    #`mount \-v \-t auto /dev/sdc1 /mnt/DEV_D_SDB1`
+    #orginal line example End   #
+    fi
+
+    if [ "$ACTION" = "add" -a "$DEVNAME" = "$DEV_SDC1" ]
+    then
+    echo `date -IS` >> `pwd`$ACT_FILE_NAME
+    echo "mount" >> `pwd`$ACT_FILE_NAME
+    `mount \-v \-t auto /dev/sdc1 /mnt/$DEV_D_SDC1`
+    fi
+
+    if [ "$ACTION" = "add" -a "$DEVNAME" = "$DEV_SDD1" ]
+    then
+    echo `date -IS` >> `pwd`$ACT_FILE_NAME
+    echo "mount" >> `pwd`$ACT_FILE_NAME
+    `mount \-v \-t auto /dev/sdd1 /mnt/$DEV_D_SDD1`
+    fi
+
+fi
+
+exit $?
